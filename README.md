@@ -91,7 +91,7 @@ Here is a diagram:
 
 ## Technical Choices and Justifications
 
-### 1. Blockchain Platform: BNB Chain
+### Blockchain Platform: BNB Chain
 
 The BNB Chain (Binance Smart Chain) was chosen for this project due to several advantages:
 
@@ -99,7 +99,7 @@ The BNB Chain (Binance Smart Chain) was chosen for this project due to several a
 - **Faster Block Times**: BNB Chain is known for its faster block times, providing quicker confirmation of transactions, which enhances user experience.
 - **EVM Compatibility**: BNB Chain is fully compatible with Ethereum’s Virtual Machine ([EVM](https://ethereum.org/fr/developers/docs/evm/)), which means that any Solidity-based smart contract can be deployed and interacted with in the same way as on Ethereum.
 
-### 2. Token Standard: ERC20
+### Token Standard: ERC20
 
 The ERC20 standard was selected because:
 
@@ -107,7 +107,7 @@ The ERC20 standard was selected because:
 - **Ease of Use**: The ERC20 standard provides a well-established and tested interface for creating fungible tokens. It includes all the basic functionality needed for token transfers, balances, and allowances, simplifying the implementation.
 - **Interoperability**: Using the ERC20 standard ensures that the token can be integrated with other decentralized applications (dApps) and DeFi protocols with minimal effort.
 
-### 3. Development Tool: Remix IDE
+### Development Tool: Remix IDE
 
 [Remix IDE](https://remix.ethereum.org) was chosen for the following reasons:
 
@@ -115,7 +115,7 @@ The ERC20 standard was selected because:
 - **Built-in Tools**: Remix includes built-in compilation and deployment tools, simplifying the process of writing, debugging, and deploying smart contracts.
 - **Interoperability with MetaMask**: It integrates seamlessly with MetaMask, allowing for easy deployment to test networks like the BNB Chain Testnet.
 
-### 4. Programming Language: Solidity
+### Programming Language: Solidity
 
 [Solidity](https://soliditylang.org/) was used as the programming language for this project because:
 
@@ -123,14 +123,14 @@ The ERC20 standard was selected because:
 - **Developer Resources**: Solidity has extensive documentation and community support, making it easier to troubleshoot and find best practices.
 - **Smart Contract Flexibility**: Solidity allows for complex logic through smart contracts, enabling the creation of customized functionalities like the burn mechanism used in the Token42 contract.
 
-### 5. Custom Functionality: Burn Mechanism
+### Custom Functionality: Burn Mechanism
 
 The decision to implement a burn function reserved for the contract owner was based on:
 
 - **Token Supply Control**: A burn mechanism allows the owner to reduce the total supply of tokens, providing more control over the token’s inflation or deflation. This can be beneficial in managing scarcity and influencing token value.
 - **Security Considerations**: Limiting the burn function to the owner prevents other users from accidentally or maliciously burning tokens, ensuring the token supply remains under the intended control.
 
-### 6. BNB Chain Testnet
+### BNB Chain Testnet
 
 For testing purposes, the BNB Chain Testnet was selected because:
 
