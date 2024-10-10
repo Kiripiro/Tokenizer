@@ -77,7 +77,7 @@ DAOs are organizations governed by smart contracts where decisions are made coll
 
 Bitcoin uses a **Proof of Work (PoW)** consensus mechanism to validate transactions and secure the blockchain. In this system, **miners** compete to solve cryptographic puzzles by finding a hash that is lower than a set target. This process involves extensive computational power and is resource-intensive. Once a valid solution (proof of work) is found, the block is broadcasted to the network, where other nodes verify its validity by rechecking the hash. This block is then added to the blockchain, creating an immutable and secure ledger. The successful miner is rewarded with newly minted Bitcoin and transaction fees. Bitcoin's security stems from the difficulty of this process, making it extremely hard for a malicious actor to alter past transactions. However, PoW is known for being energy-intensive and slower in terms of transaction throughput.
 
-Here is a diagram:
+Here is a diagram:  
 ![image](/assets/PoW.png)
 ###### https://capital.com/proof-of-work-pow-definition
 
@@ -85,7 +85,7 @@ Here is a diagram:
 
 Ethereum initially relied on PoW like Bitcoin, but it has transitioned to **Proof of Stake (PoS)** with Ethereum 2.0. In PoS, validators are chosen based on the amount of Ether they stake, or lock up, as collateral. Validators are responsible for confirming transactions and adding new blocks to the chain. Unlike PoW, where miners solve puzzles, PoS validators simply confirm the work done by others. If a validator behaves maliciously (e.g., adding invalid transactions), they risk losing their staked Ether. This mechanism makes Ethereum more energy-efficient and allows for faster transaction processing, while still maintaining decentralization and security through financial incentives. PoS addresses some of the scalability issues of PoW while ensuring that validators act honestly.
 
-Here is a diagram:
+Here is a diagram:  
 ![image](/assets/PoS.png)
 ###### https://www.softobotics.com/blogs/consensus-mechanisms-in-blockchain/
 
