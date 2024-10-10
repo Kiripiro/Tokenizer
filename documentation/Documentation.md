@@ -1,124 +1,242 @@
 
-# Token42 - Custom ERC20 Token Contract Documentation
+# Token42 - Custom ERC20 Token Contract
+
+---
 
 ## Overview
-**Token42** is a custom ERC20 token contract that implements a fixed supply and includes a burn function reserved for the owner. This documentation provides a detailed explanation of the contract's functionality and how to use its features.
 
-## Contract Details
-- **Token Name**: Token42
+**Token42** is a custom ERC20 token contract that includes specific functionalities such as rate limiting, secure ownership management, and optimizations for gas efficiency. This contract features standard ERC20 methods and a burn mechanism available only to the owner.
+
+---
+
+## Table of Contents
+
+1. [Contract Information](#contract-information)
+2. [State Variables](#state-variables)
+   - [Token Information](#token-information)
+   - [Ownership](#ownership)
+   - [Balances and Allowances](#balances-and-allowances)
+   - [Transfer Cooldown](#transfer-cooldown)
+3. [Events](#events)
+4. [Modifiers](#modifiers)
+5. [Constructor](#constructor)
+6. [Functions](#functions)
+   - [transfer](#transfer)
+   - [approve](#approve)
+   - [safeApprove](#safeApprove)
+   - [transferFrom](#transferFrom)
+   - [increaseAllowance](#increaseAllowance)
+   - [decreaseAllowance](#decreaseAllowance)
+   - [burn](#burn)
+   - [transferOwnership](#transferOwnership)
+   - [renounceOwnership](#renounceOwnership)
+7. [Internal Functions](#internal-functions)
+   - [_transfer](#_transfer)
+   - [_approve](#_approve)
+   - [_burn](#_burn)
+8. [Security Considerations](#security-considerations)
+9. [Gas Optimizations](#gas-optimizations)
+
+---
+
+## Contract Information
+
+- **Name**: Token42
 - **Symbol**: TK42
 - **Decimals**: 18
 - **Total Supply**: Defined during deployment
-- **Owner**: The deployer of the contract initially, can be transferred and revoked.
+
+---
+
+## State Variables
+
+### Token Information
+
+- `string public name`: The name of the token.
+- `string public symbol`: The symbol representing the token.
+- `uint8 public decimals`: Number of decimal places for token display purposes.
+- `uint256 public totalSupply`: The total supply of tokens.
+
+### Ownership
+
+- `address public owner`: The current owner of the contract, initially set to the deployer. The owner can transfer or renounce ownership.
+
+### Balances and Allowances
+
+- `mapping(address => uint256) public balanceOf`: Maps each address to its token balance.
+- `mapping(address => mapping(address => uint256)) public allowance`: Maps token allowances, allowing approved spenders to transfer tokens on behalf of the owner.
+
+### Transfer Cooldown
+
+- `mapping(address => uint256) public lastTransferTime`: Tracks the last transfer timestamp for each address.
+- `uint256 public transferCooldown`: The required cooldown period (in seconds) between transfers, default is 60 seconds.
+
+---
+
+## Events
+
+- `event Transfer(address indexed from, address indexed to, uint256 value)`: Emitted whenever tokens are transferred, including initial token minting.
+- `event Approval(address indexed owner, address indexed spender, uint256 value)`: Emitted whenever an owner approves a spender.
+- `event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)`: Emitted when contract ownership is transferred.
+- `event Burn(address indexed burner, uint256 value)`: Emitted when tokens are burned.
+
+---
+
+## Modifiers
+
+### onlyOwner
+
+```solidity
+modifier onlyOwner() { ... }
+```
+
+- Restricts access to certain functions to the contract owner only.
+
+### cooldownPassed
+
+```solidity
+modifier cooldownPassed(address account) { ... }
+```
+
+- Ensures that the cooldown period between transfers has passed for the given account.
+
+---
+
+## Constructor
+
+### Token42 Constructor
+
+```solidity
+constructor(uint256 initialSupply) { ... }
+```
+
+- Initializes the contract with the total supply, assigns the supply to the deployer (owner), and emits a `Transfer` event.
+
+---
 
 ## Functions
 
-### 1. Constructor: `constructor(uint256 initialSupply)`
-Initializes the token with a fixed total supply and assigns the entire supply to the owner.
+### transfer
 
-- **Parameters**:
-    - `initialSupply`: The initial supply of tokens without decimals.
-- **Events**:
-    - `Transfer`: Emits when tokens are created from the zero address.
+```solidity
+function transfer(address to, uint256 value) external cooldownPassed(msg.sender) returns (bool success)
+```
 
-### 2. Transfer: `transfer(address to, uint256 value) → bool`
-Transfers tokens from the caller's account to a recipient.
+- Transfers tokens from the caller to the specified address, applying the cooldown restriction.
+- Emits a `Transfer` event.
 
-- **Parameters**:
-    - `to`: The address of the recipient.
-    - `value`: The amount of tokens to transfer (in smallest units).
-- **Returns**: `success`: Boolean indicating whether the transfer was successful.
-- **Requirements**:
-    - The recipient address must not be zero.
-    - The caller must have enough balance.
-- **Events**:
-    - `Transfer`: Emits when tokens are transferred.
+### approve
 
-### 3. Approve: `approve(address spender, uint256 value) → bool`
-Allows a spender to transfer tokens from the owner's account up to a certain limit.
+```solidity
+function approve(address spender, uint256 value) external returns (bool success)
+```
 
-- **Parameters**:
-    - `spender`: The address allowed to spend tokens.
-    - `value`: The maximum amount of tokens the spender can transfer.
-- **Returns**: `success`: Boolean indicating whether the approval was successful.
-- **Requirements**:
-    - The spender address must not be zero.
-- **Events**:
-    - `Approval`: Emits when the allowance is set.
+- Approves the specified address to spend tokens on the caller’s behalf.
+- Emits an `Approval` event.
 
-### 4. TransferFrom: `transferFrom(address from, address to, uint256 value) → bool`
-Transfers tokens from one address to another using the allowance mechanism.
+### safeApprove
 
-- **Parameters**:
-    - `from`: The source address.
-    - `to`: The destination address.
-    - `value`: The amount to transfer.
-- **Returns**: `success`: Boolean indicating if the transfer succeeded.
-- **Requirements**:
-    - The source must have enough balance.
-    - The caller must have sufficient allowance.
-    - The destination address must not be zero.
-- **Events**:
-    - `Transfer`: Emits when tokens are transferred.
+```solidity
+function safeApprove(address spender, uint256 currentValue, uint256 newValue) external returns (bool success)
+```
 
-### 5. Increase Allowance: `increaseAllowance(address spender, uint256 addedValue) → bool`
-Increases the allowance granted to a spender.
+- Safely approves a new allowance only if the current allowance matches the expected value.
+- Prevents race conditions.
 
-- **Parameters**:
-    - `spender`: The address allowed to spend tokens.
-    - `addedValue`: The additional allowance.
-- **Returns**: `success`: Boolean indicating if the operation was successful.
-- **Requirements**:
-    - The spender address must not be zero.
-- **Events**:
-    - `Approval`: Emits when the allowance is increased.
+### transferFrom
 
-### 6. Decrease Allowance: `decreaseAllowance(address spender, uint256 subtractedValue) → bool`
-Decreases the allowance granted to a spender.
+```solidity
+function transferFrom(address from, address to, uint256 value) external cooldownPassed(from) returns (bool success)
+```
 
-- **Parameters**:
-    - `spender`: The address allowed to spend tokens.
-    - `subtractedValue`: The amount to subtract from the current allowance.
-- **Returns**: `success`: Boolean indicating if the operation was successful.
-- **Requirements**:
-    - The spender address must not be zero.
-    - The remaining allowance must not be less than zero.
-- **Events**:
-    - `Approval`: Emits when the allowance is decreased.
+- Allows a spender to transfer tokens from an approved account using the allowance mechanism.
+- Emits a `Transfer` event.
 
-### 7. Burn: `burn(uint256 value)`
-Burns a specific amount of tokens from the owner's balance, reducing the total supply.
+### increaseAllowance
 
-- **Parameters**:
-    - `value`: The number of tokens to burn.
-- **Requirements**:
-    - The caller must have enough tokens to burn.
-- **Events**:
-    - `Burn`: Emits when tokens are burned.
-    - `Transfer`: Emits when tokens are burned.
+```solidity
+function increaseAllowance(address spender, uint256 addedValue) external returns (bool success)
+```
 
-### 8. Transfer Ownership: `transferOwnership(address newOwner)`
-Transfers the ownership of the contract to a new owner.
+- Increases the spender’s allowance by a specific amount.
+- Emits an `Approval` event.
 
-- **Parameters**:
-    - `newOwner`: The address of the new owner.
-- **Requirements**:
-    - The new owner address must not be zero.
-- **Events**:
-    - `OwnershipTransferred`: Emits when ownership is transferred.
+### decreaseAllowance
 
-### 9. Renounce Ownership: `renounceOwnership()`
-Allows the owner to renounce their ownership, leaving the contract without an owner.
+```solidity
+function decreaseAllowance(address spender, uint256 subtractedValue) external returns (bool success)
+```
 
-- **Events**:
-    - `OwnershipTransferred`: Emits when ownership is renounced.
+- Decreases the spender’s allowance by a specific amount.
+- Emits an `Approval` event.
 
-## Events
-- `Transfer`: Emitted when tokens are transferred.
-- `Approval`: Emitted when an allowance is set or updated.
-- `OwnershipTransferred`: Emitted when ownership is transferred.
-- `Burn`: Emitted when tokens are burned.
+### burn
+
+```solidity
+function burn(uint256 value) external onlyOwner
+```
+
+- Allows the owner to destroy tokens, reducing the total supply.
+- Emits a `Burn` and a `Transfer` event.
+
+### transferOwnership
+
+```solidity
+function transferOwnership(address newOwner) external onlyOwner
+```
+
+- Transfers ownership of the contract to a new owner.
+- Emits an `OwnershipTransferred` event.
+
+### renounceOwnership
+
+```solidity
+function renounceOwnership() external onlyOwner
+```
+
+- Allows the owner to renounce ownership of the contract.
+- Emits an `OwnershipTransferred` event.
+
+---
+
+## Internal Functions
+
+### _transfer
+
+```solidity
+function _transfer(address from, address to, uint256 value) internal
+```
+
+- Handles the logic for transferring tokens between addresses and emits the `Transfer` event.
+
+### _approve
+
+```solidity
+function _approve(address owner, address spender, uint256 value) internal
+```
+
+- Updates the allowance and emits an `Approval` event.
+
+### _burn
+
+```solidity
+function _burn(address account, uint256 value) internal
+```
+
+- Handles the logic for burning tokens, reducing the total supply, and emits the `Burn` and `Transfer` events.
+
+---
 
 ## Security Considerations
-- Ensure that the `onlyOwner` modifier is correctly applied to sensitive functions like `burn`, `transferOwnership`, and `renounceOwnership`.
-- Avoid transferring tokens to the zero address or performing approvals to the zero address.
+
+- **Reentrancy Protection**: The contract avoids external calls during critical operations, mitigating reentrancy risks.
+- **Rate Limiting**: A cooldown period of 60 seconds is applied to transfers, preventing rapid transactions from the same account.
+- **Ownership Security**: Only the owner can burn tokens or transfer ownership, ensuring sensitive operations are controlled.
+
+---
+
+## Gas Optimizations
+
+- **Unchecked Arithmetic**: Uses unchecked arithmetic operations in critical places to save gas, assuming necessary preconditions are met.
+- **Self-Transfer Optimization**: Skips unnecessary balance updates when transferring tokens to self.
+- **Modifier Efficiency**: Cooldown logic is implemented in a modifier to centralize checks and streamline gas usage.

@@ -36,7 +36,7 @@ Before deploying the Token42 contract on the BNB Chain Testnet, make sure you ha
 ### Step 5: Verify Deployment
 Once the transaction is confirmed, your contract will be deployed. You can verify the contract and interact with it on [BscScan Testnet](https://testnet.bscscan.com/).
 
-- **Contract Address**: `0x1699a72b8e54DeE65Fff9c88d83573bE4f8025c5`
+- **Contract Address**: Defined during deployment
 - **Token Name**: Token42
 - **Symbol**: TK42
 - **Decimals**: 18
