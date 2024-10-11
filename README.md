@@ -57,7 +57,6 @@ Users control their digital identity and personal data, deciding when and with w
 ### Development Tools
 - **Solidity**: Programming language for writing smart contracts on Ethereum and BNB Chain.
 - **Remix IDE**: Online development environment for coding, compiling, and deploying smart contracts.
-- **Truffle Suite**: A set of tools for developing, testing, and deploying dApps.
 
 ## Practical Applications of Web3
 
