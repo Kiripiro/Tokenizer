@@ -136,3 +136,11 @@ For testing purposes, the BNB Chain Testnet was selected because:
 
 - **Risk-Free Testing**: The testnet allows for deploying and testing the contract without spending real funds, which is critical in the development phase.
 - **Same Environment as Mainnet**: The testnet closely mirrors the BNB Chain mainnet, ensuring that any deployments and interactions on the testnet will behave similarly on the mainnet, reducing potential risks during the actual launch.
+
+
+### OpenZeppelin
+
+I chose to use this depedency to handle the Ownership control over the smart contract because:
+
+- **Widely trusted and used**: OpenZeppelin Contracts helps to minimize risk by using battle-tested libraries of smart contracts for Ethereum and other EVM blockchains. It includes the most used implementations of ERC standards.
+- **Open Source**: Their development tools are completely open source and available on Github.
